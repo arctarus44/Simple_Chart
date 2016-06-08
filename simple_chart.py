@@ -5,6 +5,20 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont
+
+class ChartPoint(QPoint):
+	"""docstring for ChartPoint"""
+
+	def __init__(self, abscissa, ordinate, chart, update_pos = True):
+		"""Create a new point on the chart. If update_pos is set to False, you
+		need to call by yourself the update_position method"""
+		super(ChartPoint, self).__init__()
+		self.abscissa = abscissa
+		self.ordinate = ordinate
+		self.chart = chart
+
+
+
 class SimpleChart(QWidget):
 
 	MARGIN = 60
@@ -97,3 +111,10 @@ class SimpleChart(QWidget):
 		lbl_pt = QPoint(self.max_abs_pos.x() - width / 2,
 		                self.max_abs_pos.y() + self.__ABS_LBL_SPACING + height)
 		qpainter.drawText(lbl_pt, abs_lbl)
+
+		# draw zero label
+		zero_lbl = "0"
+		width = self.__lbl_ft_metrics.width(zero_lbl)
+		lbl_pt = QPoint(self.zero_pos.x() - self.__ORD_LBL_SPACING,
+		                self.zero_pos.y() + self.__ORD_LBL_SPACING)
+		qpainter.drawText(lbl_pt, zero_lbl)
