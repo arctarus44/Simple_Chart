@@ -2,7 +2,7 @@
 A simple chart widget written in python with PyQt5
 
 ## Todo :
-- [ ] Draw background (axis and guide)
+- [x] Draw background (axis and guide)
 - [ ] Draw points
 - [ ] Draw line
 - [ ] Make abscissa and ordinate adaptative
