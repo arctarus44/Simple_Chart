@@ -60,11 +60,11 @@ class SimpleChart(QWidget):
 		self.__lbl_font = QFont("serif", 7, QFont.Light)
 		self.__lbl_ft_metrics = QFontMetrics(self.__lbl_font)
 
-	def addPoint(self, abscissa, ordinate):
+	def addPoint(self, abscissa, ordinate, update=True):
 		"""Add a point on the chart"""
 		# TODO : if the point is above the maximum value of the ordinate or
 		# abscissa update the right maximum value and every points position
-		self.__points.append(ChartPoint(abscissa, ordinate, self))
+		self.__points.append(ChartPoint(abscissa, ordinate, self, update))
 
 	def updatePointsPosition(self):
 		# NOTE : this will be replaced by a method that update every lines.
