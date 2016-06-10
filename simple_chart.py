@@ -9,6 +9,7 @@ import abc
 
 class Lines(object):
 	"""docstring for Lines"""
+
 	def __init__(self, chart, pen):
 		self._points = []
 		self.pen = pen
@@ -59,8 +60,6 @@ class ChartPoint(QPoint):
 class SimpleAbstractChart(QWidget):
 
 	__metaclass__ = abc.ABCMeta
-
-	# TODO : add methods to update every points/lines
 
 	MARGIN = 60
 	ABS_GUIDE_LEN = 15
@@ -170,6 +169,7 @@ class SimpleAbstractChart(QWidget):
 
 class SimpleDotChart(SimpleAbstractChart):
 	"""docstring for DotChart"""
+
 	def __init__(self):
 		super(SimpleDotChart, self).__init__()
 		self.__points = []
@@ -191,6 +191,7 @@ class SimpleDotChart(SimpleAbstractChart):
 
 class SimpleLinesChart(SimpleAbstractChart):
 	"""docstring for SimpleLinesChart"""
+	
 	def __init__(self):
 		super(SimpleLinesChart, self).__init__()
 		self._lines = {}
