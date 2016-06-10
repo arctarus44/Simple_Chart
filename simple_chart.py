@@ -141,3 +141,21 @@ class SimpleAbstractChart(QWidget):
 	@abc.abstractmethod
 	def _drawData(self, qpainter):
 		raise NotImplementedError
+
+
+class SimpleDotChart(SimpleAbstractChart):
+	"""docstring for DotChart"""
+	def __init__(self):
+		super(SimpleDotChart, self).__init__()
+		self.__points = []
+		# Pen
+		self.__dot_pen = QPen(Qt.red)
+
+	def addPoint(self, abscissa, ordinate, update_pos=True):
+		self.__points.append(ChartPoint(abscissa, ordinate, self, update_pos))
+
+	def _drawData(self, qpainter):
+		qpainter.setPen(self.__dot_pen)
+
+		for pt in self.__points:
+			qpainter.drawPoint(pt)
