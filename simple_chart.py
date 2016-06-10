@@ -7,9 +7,6 @@ from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont, QColor
 import abc
 
-
-
-
 class ChartPoint(QPoint):
 	"""docstring for ChartPoint"""
 
@@ -34,7 +31,9 @@ class ChartPoint(QPoint):
 		self.setY(int(self.__chart.zero_pos.y() - y))
 
 
-class SimpleChart(QWidget, metaclass=abc.ABCMeta):
+class SimpleAbstractChart(QWidget):
+
+	__metaclass__ = abc.ABCMeta
 
 	# TODO : add methods to update every points/lines
 
@@ -46,12 +45,11 @@ class SimpleChart(QWidget, metaclass=abc.ABCMeta):
 	__ABS_LBL_SPACING = 10
 
 	def __init__(self):
-		super(SimpleChart, self).__init__()
+		super(SimpleAbstractChart, self).__init__()
 		self.ord_max_value = 100
 		self.abs_max_value = 100
 		self.unit_abs = None
 		self.unit_ord = None
-		self.__points = []
 
 		# Graphical property
 		self.setAutoFillBackground(True)
@@ -65,12 +63,6 @@ class SimpleChart(QWidget, metaclass=abc.ABCMeta):
 		# Fonts
 		self.__lbl_font = QFont("serif", 7, QFont.Light)
 		self.__lbl_ft_metrics = QFontMetrics(self.__lbl_font)
-
-	def addPoint(self, abscissa, ordinate, update=True):
-		"""Add a point on the chart"""
-		# TODO : if the point is above the maximum value of the ordinate or
-		# abscissa update the right maximum value and every points position
-		self.__points.append(ChartPoint(abscissa, ordinate, self, update))
 
 	def updatePointsPosition(self):
 		# NOTE : this will be replaced by a method that update every lines.
@@ -91,11 +83,11 @@ class SimpleChart(QWidget, metaclass=abc.ABCMeta):
 	def paintEvent(self, event):
 		qpainter = QPainter()
 		qpainter.begin(self)
-		self.__drawBackground(qpainter)
-		self.__drawPoints(qpainter)
+		self._drawBackground(qpainter)
+		self._drawData(qpainter)
 		qpainter.end()
 
-	def __drawBackground(self, qpainter):
+	def _drawBackground(self, qpainter):
 		# Set background Color
 		pal = self.palette()
 		pal.setColor(self.backgroundRole(), Qt.white)
@@ -146,6 +138,6 @@ class SimpleChart(QWidget, metaclass=abc.ABCMeta):
 		                self.zero_pos.y() + self.__ORD_LBL_SPACING)
 		qpainter.drawText(lbl_pt, zero_lbl)
 
-		@abc.abstractmethod
-		def __drawData(self):
-			raise NotImplementedError
+	@abc.abstractmethod
+	def _drawData(self, qpainter):
+		raise NotImplementedError
