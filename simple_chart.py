@@ -7,6 +7,25 @@ from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont, QColor
 import abc
 
+class Lines(object):
+	"""docstring for Lines"""
+	def __init__(self, chart, style=Qt.SolidLine, width=1):
+		self._points = []
+		self._style = Qt.SolidLine
+		self._width = 1
+		self._chart = chart
+
+
+	def addPoint(self, point, update_pos=True):
+		last_pt = self._points[-1]
+
+		self._points.append(point)
+
+		if update_pos:
+			point.updatePosition()
+
+		self._points = sorted(self._points, key=lambda pt : pt.abscissa)
+
 class ChartPoint(QPoint):
 	"""docstring for ChartPoint"""
 
