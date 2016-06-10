@@ -182,12 +182,12 @@ class SimpleDotChart(SimpleAbstractChart):
 
 	def _drawData(self, qpainter):
 		qpainter.setPen(self.__dot_pen)
-
 		for pt in self.__points:
 			qpainter.drawPoint(pt)
 
-	def _updateData(self, arg):
-		pass
+	def _updateDataPosition(self):
+		for pt in self.__points:
+			pt.updatePosition()
 
 
 class SimpleLinesChart(SimpleAbstractChart):
@@ -216,3 +216,6 @@ class SimpleLinesChart(SimpleAbstractChart):
 		for pt in line[1:]:
 			qpainter.drawLine(prev_pt, pt)
 			prev_pt = pt
+
+	def _updateDataPosition(self):
+		raise NotImplementedError
