@@ -4,7 +4,9 @@
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont
+from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont, QColor
+
+
 
 class ChartPoint(QPoint):
 	"""docstring for ChartPoint"""
@@ -31,6 +33,8 @@ class ChartPoint(QPoint):
 
 
 class SimpleChart(QWidget):
+
+	# TODO : add methods to update every points/lines
 
 	MARGIN = 60
 	ABS_GUIDE_LEN = 15
@@ -86,6 +90,7 @@ class SimpleChart(QWidget):
 		qpainter = QPainter()
 		qpainter.begin(self)
 		self.__drawBackground(qpainter)
+		self.__drawPoints(qpainter)
 		qpainter.end()
 
 	def __drawBackground(self, qpainter):
@@ -138,3 +143,9 @@ class SimpleChart(QWidget):
 		lbl_pt = QPoint(self.zero_pos.x() - self.__ORD_LBL_SPACING,
 		                self.zero_pos.y() + self.__ORD_LBL_SPACING)
 		qpainter.drawText(lbl_pt, zero_lbl)
+
+	def __drawPoints(self, qpainter):
+		qpainter.setPen(QColor(Qt.red))
+
+		for pt in self.__points:
+			qpainter.drawPoint(pt)
