@@ -28,6 +28,10 @@ class Lines(object):
 
 		self._points = sorted(self._points, key=lambda pt : pt.abscissa)
 
+	def updatePointsPosition(self):
+		for pt in self._points:
+			pt.updatePosition()
+
 class ChartPoint(QPoint):
 	"""docstring for ChartPoint"""
 
@@ -84,11 +88,6 @@ class SimpleAbstractChart(QWidget):
 		# Fonts
 		self.__lbl_font = QFont("serif", 7, QFont.Light)
 		self.__lbl_ft_metrics = QFontMetrics(self.__lbl_font)
-
-	def updatePointsPosition(self):
-		# NOTE : this will be replaced by a method that update every lines.
-		for pt in self.__points:
-			pt.updatePosition()
 
 	def __updateOrdAbsPos(self):
 		# FIXME : handle the case where size.height() < self.MARGIN
@@ -218,4 +217,6 @@ class SimpleLinesChart(SimpleAbstractChart):
 			prev_pt = pt
 
 	def _updateDataPosition(self):
-		raise NotImplementedError
+		for k in self._lines.keys():
+			line = self._lines[k]
+			line.updatePointsPosition()
