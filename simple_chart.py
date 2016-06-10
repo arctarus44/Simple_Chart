@@ -3,22 +3,24 @@
 # tab-width: 4
 
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import QPoint, Qt, QLine
 from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont, QColor
 import abc
 
 class Lines(object):
 	"""docstring for Lines"""
-	def __init__(self, chart, style=Qt.SolidLine, width=1):
+	def __init__(self, chart, pen):
 		self._points = []
-		self._style = Qt.SolidLine
-		self._width = 1
+		self.pen = pen
 		self._chart = chart
 
+	def __iter__(self):
+		return self._points.__iter__()
+
+	def __getitem__(self, x):
+		return self._points.__getitem__(x)
 
 	def addPoint(self, point, update_pos=True):
-		last_pt = self._points[-1]
-
 		self._points.append(point)
 
 		if update_pos:
