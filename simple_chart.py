@@ -5,6 +5,8 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont, QColor
+import abc
+
 
 
 
@@ -32,7 +34,7 @@ class ChartPoint(QPoint):
 		self.setY(int(self.__chart.zero_pos.y() - y))
 
 
-class SimpleChart(QWidget):
+class SimpleChart(QWidget, metaclass=abc.ABCMeta):
 
 	# TODO : add methods to update every points/lines
 
@@ -144,8 +146,6 @@ class SimpleChart(QWidget):
 		                self.zero_pos.y() + self.__ORD_LBL_SPACING)
 		qpainter.drawText(lbl_pt, zero_lbl)
 
-	def __drawPoints(self, qpainter):
-		qpainter.setPen(QColor(Qt.red))
-
-		for pt in self.__points:
-			qpainter.drawPoint(pt)
+		@abc.abstractmethod
+		def __drawData(self):
+			raise NotImplementedError
