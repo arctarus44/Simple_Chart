@@ -180,3 +180,31 @@ class SimpleDotChart(SimpleAbstractChart):
 
 		for pt in self.__points:
 			qpainter.drawPoint(pt)
+
+
+class SimpleLinesChart(SimpleAbstractChart):
+	"""docstring for SimpleLinesChart"""
+	def __init__(self):
+		super(SimpleLinesChart, self).__init__()
+		self._lines = {}
+
+	def addLine(self, key, pen):
+		self._lines[key] = Lines(self, pen)
+
+	def addPoint(self, key, abscissa, ordinate, update_pos=True):
+		self._lines[key].addPoint(ChartPoint(abscissa,
+		                                     ordinate,
+		                                     self,
+		                                     update_pos))
+
+	def _drawData(self, qpainter):
+		for k in self._lines.keys():
+			self.__drawLine(qpainter, self._lines[k])
+
+	def __drawLine(self, qpainter, line):
+		qpainter.setPen(line.pen)
+		prev_pt = line[0]
+
+		for pt in line[1:]:
+			qpainter.drawLine(prev_pt, pt)
+			prev_pt = pt
