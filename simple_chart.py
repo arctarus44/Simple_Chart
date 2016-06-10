@@ -100,6 +100,7 @@ class SimpleAbstractChart(QWidget):
 
 	def resizeEvent(self, event):
 		self.__updateOrdAbsPos()
+		self._updateDataPosition()
 
 	def paintEvent(self, event):
 		qpainter = QPainter()
@@ -163,6 +164,10 @@ class SimpleAbstractChart(QWidget):
 	def _drawData(self, qpainter):
 		raise NotImplementedError
 
+	@abc.abstractmethod
+	def _updateDataPosition(self):
+		raise NotImplementedError
+
 
 class SimpleDotChart(SimpleAbstractChart):
 	"""docstring for DotChart"""
@@ -180,6 +185,9 @@ class SimpleDotChart(SimpleAbstractChart):
 
 		for pt in self.__points:
 			qpainter.drawPoint(pt)
+
+	def _updateData(self, arg):
+		pass
 
 
 class SimpleLinesChart(SimpleAbstractChart):
