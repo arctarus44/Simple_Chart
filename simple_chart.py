@@ -107,31 +107,7 @@ class SimpleAbstractChart(QWidget):
 		self._drawData(qpainter)
 		qpainter.end()
 
-	def _drawBackground(self, qpainter):
-		# Set background Color
-		pal = self.palette()
-		pal.setColor(self.backgroundRole(), Qt.white)
-		self.setPalette(pal)
-
-		# DEBUG
-		# print("Ord  ("+ str(self.max_ord_pos.x()) + ',' + str(self.max_ord_pos.y())+ ")")
-		# print("Abs  ("+ str(self.max_abs_pos.x()) + ',' + str(self.max_abs_pos.y())+ ")")
-		# print("Zero ("+ str(self.zero_pos.x()) + ',' + str(self.zero_pos.y())+ ")")
-		# END DEBUG
-
-		# draw axis
-		qpainter.setPen(self.__axis_pen)
-		qpainter.drawLine(self.zero_pos, self.max_ord_pos)
-		qpainter.drawLine(self.zero_pos, self.max_abs_pos)
-
-		# draw guides
-		qpainter.setPen(self.__guides_pen)
-		ord_guide = QPoint(self.max_abs_pos.x(), self.max_ord_pos.y())
-		qpainter.drawLine(self.max_ord_pos, ord_guide)
-		point = QPoint(self.max_abs_pos.x(),
-		               self.max_abs_pos.y() - self.ABS_GUIDE_LEN)
-		qpainter.drawLine(self.max_abs_pos, point)
-
+	def __drawLabels(self, qpainter):
 		# draw ordinate label
 		qpainter.setPen(self.__label_pen)
 
@@ -157,6 +133,39 @@ class SimpleAbstractChart(QWidget):
 		lbl_pt = QPoint(self.zero_pos.x() - self.__ORD_LBL_SPACING,
 		                self.zero_pos.y() + self.__ORD_LBL_SPACING)
 		qpainter.drawText(lbl_pt, zero_lbl)
+
+	def __drawAxis(self, qpainter):
+		qpainter.setPen(self.__axis_pen)
+		qpainter.drawLine(self.zero_pos, self.max_ord_pos)
+		qpainter.drawLine(self.zero_pos, self.max_abs_pos)
+
+	def __drawGuides(self, qpainter):
+		qpainter.setPen(self.__guides_pen)
+		ord_guide = QPoint(self.max_abs_pos.x(), self.max_ord_pos.y())
+		qpainter.drawLine(self.max_ord_pos, ord_guide)
+		point = QPoint(self.max_abs_pos.x(),
+		               self.max_abs_pos.y() - self.ABS_GUIDE_LEN)
+		qpainter.drawLine(self.max_abs_pos, point)
+
+
+
+	def _drawBackground(self, qpainter):
+		# Set background Color
+		pal = self.palette()
+		pal.setColor(self.backgroundRole(), Qt.white)
+		self.setPalette(pal)
+
+		# DEBUG
+		# print("Ord  ("+ str(self.max_ord_pos.x()) + ',' + str(self.max_ord_pos.y())+ ")")
+		# print("Abs  ("+ str(self.max_abs_pos.x()) + ',' + str(self.max_abs_pos.y())+ ")")
+		# print("Zero ("+ str(self.zero_pos.x()) + ',' + str(self.zero_pos.y())+ ")")
+		# END DEBUG
+
+		self.__drawAxis(qpainter)
+		self.__drawGuides(qpainter)
+		self.__drawLabels(qpainter)
+
+
 
 	@abc.abstractmethod
 	def _drawData(self, qpainter):
@@ -191,7 +200,7 @@ class SimpleDotChart(SimpleAbstractChart):
 
 class SimpleLinesChart(SimpleAbstractChart):
 	"""docstring for SimpleLinesChart"""
-	
+
 	def __init__(self):
 		super(SimpleLinesChart, self).__init__()
 		self._lines = {}
