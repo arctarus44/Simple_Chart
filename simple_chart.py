@@ -63,6 +63,7 @@ class SimpleAbstractChart(QWidget):
 
 	MARGIN = 60
 	ABS_GUIDE_LEN = 15
+	ZERO = "0"
 	__PERCENT = "%"
 	__MAX_PERCENT = 100
 	__ORD_LBL_SPACING = 15
@@ -128,7 +129,7 @@ class SimpleAbstractChart(QWidget):
 		qpainter.drawText(lbl_pt, abs_lbl)
 
 		# draw zero label
-		zero_lbl = "0"
+		zero_lbl = self.ZERO
 		width = self.__lbl_ft_metrics.width(zero_lbl)
 		lbl_pt = QPoint(self.zero_pos.x() - self.__ORD_LBL_SPACING,
 		                self.zero_pos.y() + self.__ORD_LBL_SPACING)
@@ -146,8 +147,6 @@ class SimpleAbstractChart(QWidget):
 		point = QPoint(self.max_abs_pos.x(),
 		               self.max_abs_pos.y() - self.ABS_GUIDE_LEN)
 		qpainter.drawLine(self.max_abs_pos, point)
-
-
 
 	def _drawBackground(self, qpainter):
 		# Set background Color
