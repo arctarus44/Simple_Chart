@@ -3,8 +3,8 @@
 # tab-width: 4
 
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QPoint, Qt, QLine
-from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont, QColor
+from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont
 import abc
 
 class Lines(object):
@@ -164,8 +164,6 @@ class SimpleAbstractChart(QWidget):
 		self.__drawGuides(qpainter)
 		self.__drawLabels(qpainter)
 
-
-
 	@abc.abstractmethod
 	def _drawData(self, qpainter):
 		raise NotImplementedError
@@ -215,15 +213,13 @@ class SimpleLinesChart(SimpleAbstractChart):
 
 	def _drawData(self, qpainter):
 		for k in self._lines.keys():
-			self.__drawLine(qpainter, self._lines[k])
+			line = self._lines[k]
+			qpainter.setPen(line.pen)
+			prev_pt = line[0]
 
-	def __drawLine(self, qpainter, line):
-		qpainter.setPen(line.pen)
-		prev_pt = line[0]
-
-		for pt in line[1:]:
-			qpainter.drawLine(prev_pt, pt)
-			prev_pt = pt
+			for pt in line[1:]:
+				qpainter.drawLine(prev_pt, pt)
+				prev_pt = pt
 
 	def _updateDataPosition(self):
 		for k in self._lines.keys():
