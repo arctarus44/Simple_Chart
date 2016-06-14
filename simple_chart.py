@@ -7,8 +7,8 @@ from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont
 import abc
 
-class Lines(object):
-	"""docstring for Lines"""
+class Line(object):
+	"""docstring for Line"""
 
 	def __init__(self, chart, pen):
 		self._points = []
@@ -72,7 +72,7 @@ class SimpleAbstractChart(QWidget):
 		self.unit_abs = None
 		self.unit_ord = None
 
-		# Graphical property
+		# Graphical properties
 		self.setAutoFillBackground(True)
 		self.__updateOrdAbsPos()
 
@@ -95,7 +95,7 @@ class SimpleAbstractChart(QWidget):
 
 	def resizeEvent(self, event):
 		self.__updateOrdAbsPos()
-		self._updateDataPosition()
+		self.updateDataPosition()
 
 	def paintEvent(self, event):
 		qpainter = QPainter()
@@ -199,7 +199,7 @@ class SimpleLinesChart(SimpleAbstractChart):
 		self._lines = {}
 
 	def addLine(self, key, pen):
-		self._lines[key] = Lines(self, pen)
+		self._lines[key] = Line(self, pen)
 
 	def addPoint(self, key, abscissa, ordinate, update_pos=True):
 		self._lines[key].addPoint(ChartPoint(abscissa,
