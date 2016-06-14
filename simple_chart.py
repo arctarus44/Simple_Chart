@@ -21,12 +21,8 @@ class Lines(object):
 	def __getitem__(self, x):
 		return self._points.__getitem__(x)
 
-	def addPoint(self, point, update_pos=True):
+	def addPoint(self, point):
 		self._points.append(point)
-
-		if update_pos:
-			point.updatePosition()
-
 		self._points = sorted(self._points, key=lambda pt : pt.abscissa)
 
 	def updatePointsPosition(self):
@@ -44,7 +40,7 @@ class ChartPoint(QPoint):
 		self.ordinate = ordinate
 		self.__chart = chart
 
-		if update_pos:
+		if update_pos is True:
 			self.updatePosition()
 
 	def updatePosition(self):
