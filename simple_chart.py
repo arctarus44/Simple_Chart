@@ -165,7 +165,7 @@ class SimpleAbstractChart(QWidget):
 		raise NotImplementedError
 
 	@abc.abstractmethod
-	def _updateDataPosition(self):
+	def updateDataPosition(self):
 		raise NotImplementedError
 
 
@@ -186,7 +186,7 @@ class SimpleDotChart(SimpleAbstractChart):
 		for pt in self.__points:
 			qpainter.drawPoint(pt)
 
-	def _updateDataPosition(self):
+	def updateDataPosition(self):
 		for pt in self.__points:
 			pt.updatePosition()
 
@@ -217,7 +217,7 @@ class SimpleLinesChart(SimpleAbstractChart):
 				qpainter.drawLine(prev_pt, pt)
 				prev_pt = pt
 
-	def _updateDataPosition(self):
+	def updateDataPosition(self):
 		for k in self._lines.keys():
 			line = self._lines[k]
 			line.updatePointsPosition()
