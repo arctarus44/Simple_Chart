@@ -184,11 +184,10 @@ class SimpleAbstractChart(QWidget):
 
 		if abscissa is not None:
 			self.abs_max_value = maximum
+			self._updateDataPosition()
 		else:
 			self.ord_max_value = maximum
-
-		self._updateDataPosition()
-
+			self._updateDataPosition()
 
 	@abc.abstractmethod
 	def _drawData(self, qpainter):
