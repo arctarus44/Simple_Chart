@@ -32,16 +32,13 @@ class Line(object):
 class ChartPoint(QPoint):
 	"""docstring for ChartPoint"""
 
-	def __init__(self, abscissa, ordinate, chart, update_pos=True):
-		"""Create a new point on the chart. If update_pos is set to False, you
-		need to call by yourself the update_position method"""
+	def __init__(self, abscissa, ordinate, chart):
+		"""Create a new point on the chart."""
 		super(ChartPoint, self).__init__()
 		self.abscissa = abscissa
 		self.ordinate = ordinate
 		self.__chart = chart
-
-		if update_pos is True:
-			self.updatePosition()
+		self.updatePosition()
 
 	def updatePosition(self):
 		x = self.abscissa / self.__chart.abs_max_value
@@ -97,7 +94,7 @@ class SimpleAbstractChart(QWidget):
 
 	def resizeEvent(self, event):
 		self.__updateOrdAbsPos()
-		self.updateDataPosition()
+		self._updateDataPosition()
 
 	def paintEvent(self, event):
 		qpainter = QPainter()
@@ -162,14 +159,6 @@ class SimpleAbstractChart(QWidget):
 		self.__drawGuides(qpainter)
 		self.__drawLabels(qpainter)
 
-	@abc.abstractmethod
-	def _drawData(self, qpainter):
-		raise NotImplementedError
-
-	@abc.abstractmethod
-	def updateDataPosition(self):
-		raise NotImplementedError
-
 	def _updateMaxAbscissa(self, abscissa):
 		self._updateMaxOrdAbs(abscissa, None)
 
@@ -198,8 +187,16 @@ class SimpleAbstractChart(QWidget):
 		else:
 			self.ord_max_value = maximum
 
-		self.updateDataPosition()
+		self._updateDataPosition()
 
+
+	@abc.abstractmethod
+	def _drawData(self, qpainter):
+		raise NotImplementedError
+
+	@abc.abstractmethod
+	def updateDataPosition(self):
+		raise NotImplementedError
 
 
 class SimpleDotChart(SimpleAbstractChart):
@@ -211,8 +208,8 @@ class SimpleDotChart(SimpleAbstractChart):
 		# Pen
 		self.__dot_pen = QPen(Qt.red)
 
-	def addPoint(self, abscissa, ordinate, update_pos=True):
-		self.__points.append(ChartPoint(abscissa, ordinate, self, update_pos))
+	def addPoint(self, abscissa, ordinate):
+		self.__points.append(ChartPoint(abscissa, ordinate, self))
 
 		if self._pt_max_abs < abscissa:
 			self._updateMaxAbscissa(abscissa)
@@ -224,7 +221,7 @@ class SimpleDotChart(SimpleAbstractChart):
 		for pt in self.__points:
 			qpainter.drawPoint(pt)
 
-	def updateDataPosition(self):
+	def _updateDataPosition(self):
 		for pt in self.__points:
 			pt.updatePosition()
 
@@ -239,11 +236,8 @@ class SimpleLinesChart(SimpleAbstractChart):
 	def addLine(self, key, pen):
 		self._lines[key] = Line(self, pen)
 
-	def addPoint(self, key, abscissa, ordinate, update_pos=True):
-		self._lines[key].addPoint(ChartPoint(abscissa,
-		                                     ordinate,
-		                                     self,
-		                                     update_pos))
+	def addPoint(self, key, abscissa, ordinate):
+		self._lines[key].addPoint(ChartPoint(abscissa, ordinate, self))
 
 		if self._pt_max_abs < abscissa:
 			self._updateMaxAbscissa(abscissa)
@@ -260,7 +254,7 @@ class SimpleLinesChart(SimpleAbstractChart):
 				qpainter.drawLine(prev_pt, pt)
 				prev_pt = pt
 
-	def updateDataPosition(self):
+	def _updateDataPosition(self):
 		for k in self._lines.keys():
 			line = self._lines[k]
 			line.updatePointsPosition()
