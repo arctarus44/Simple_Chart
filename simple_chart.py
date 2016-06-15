@@ -71,6 +71,8 @@ class SimpleAbstractChart(QWidget):
 		self.abs_max_value = 100
 		self.unit_abs = None
 		self.unit_ord = None
+		self._pt_max_abs = 0
+		self._pt_max_ord = 0
 
 		# Graphical properties
 		self.setAutoFillBackground(True)
@@ -168,6 +170,37 @@ class SimpleAbstractChart(QWidget):
 	def updateDataPosition(self):
 		raise NotImplementedError
 
+	def _updateMaxAbscissa(self, abscissa):
+		self._updateMaxOrdAbs(abscissa, None)
+
+	def _updateMaxOrdinate(self, ordinate):
+		self._updateMaxOrdAbs(None, ordinate)
+
+	def _updateMaxOrdAbs(self, abscissa, ordinate):
+		if abscissa is not None:
+			value = abscissa
+		else:
+			value = ordinate
+
+		maximum = None
+		range_end = 100
+		while maximum == None:
+			if value == range_end:
+				maximum = value
+			if value < range_end:
+				tmp = range_end / 10
+				maximum = int(int(value / tmp) * tmp + tmp)
+
+			range_end *= 10
+
+		if abscissa is not None:
+			self.abs_max_value = maximum
+		else:
+			self.ord_max_value = maximum
+
+		self.updateDataPosition()
+
+
 
 class SimpleDotChart(SimpleAbstractChart):
 	"""docstring for DotChart"""
@@ -180,6 +213,11 @@ class SimpleDotChart(SimpleAbstractChart):
 
 	def addPoint(self, abscissa, ordinate, update_pos=True):
 		self.__points.append(ChartPoint(abscissa, ordinate, self, update_pos))
+
+		if self._pt_max_abs < abscissa:
+			self._updateMaxAbscissa(abscissa)
+		elif self._pt_max_ord < ordinate:
+			self._updateMaxOrdinate(ordinate)
 
 	def _drawData(self, qpainter):
 		qpainter.setPen(self.__dot_pen)
