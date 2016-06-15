@@ -245,6 +245,11 @@ class SimpleLinesChart(SimpleAbstractChart):
 		                                     self,
 		                                     update_pos))
 
+		if self._pt_max_abs < abscissa:
+			self._updateMaxAbscissa(abscissa)
+		elif self._pt_max_ord < ordinate:
+			self._updateMaxOrdinate(ordinate)
+
 	def _drawData(self, qpainter):
 		for k in self._lines.keys():
 			line = self._lines[k]
