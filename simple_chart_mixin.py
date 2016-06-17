@@ -27,3 +27,23 @@ class Line(object):
 	def updatePointsPosition(self):
 		for pt in self._points:
 			pt.updatePosition()
+
+class ChartPoint(QPoint):
+	"""docstring for ChartPoint"""
+
+	def __init__(self, abscissa, ordinate, chart):
+		"""Create a new point on the chart."""
+		super(ChartPoint, self).__init__()
+		self.abscissa = abscissa
+		self.ordinate = ordinate
+		self.__chart = chart
+		self.updatePosition()
+
+	def updatePosition(self):
+		x = self.abscissa / self.__chart.abs_max_value
+		x *= (self.__chart.max_abs_pos.x() - self.__chart.zero_pos.x())
+		self.setX(int(x + self.__chart.zero_pos.x()))
+
+		y = self.ordinate / self.__chart.ord_max_value
+		y *= (self.__chart.zero_pos.y() - self.__chart.max_ord_pos.y())
+		self.setY(int(self.__chart.zero_pos.y() - y))
