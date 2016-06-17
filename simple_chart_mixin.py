@@ -48,6 +48,13 @@ class ChartPoint(QPoint):
 		y *= (self.__chart.zero_pos.y() - self.__chart.max_ord_pos.y())
 		self.setY(int(self.__chart.zero_pos.y() - y))
 
+class ChartPointPen(ChartPoint):
+	"""docstring for ChartPointPen"""
+	def __init__(self, abscissa, ordinate, chart, pen):
+		super(ChartPointPen, self).__init__(abscissa, ordinate, chart)
+		self._pen = pen
+
+
 class LinesHandler:
 	"""docstring for LineHandler"""
 
@@ -89,6 +96,37 @@ class LinesHandler:
 		for k in self._data.keys():
 			line = self._data[k]
 			line.updatePointsPosition()
+
+class DotsHandler:
+	"""docstring for DotsHandler"""
+
+
+	def addPoint(self, abscissa, ordinate, pen):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = []
+		self._data.append(ChartPointPen(abscissa, ordinate, self, pen))
+
+		if self._pt_max_abs < abscissa:
+			self._updateMaxAbscissa(abscissa)
+		elif self._pt_max_ord < ordinate:
+			self._updateMaxOrdinate(ordinate)
+
+	def _drawData(self, qpainter):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = []
+		for pt in self._data:
+			qpainter.setPen(pt._pen)
+			qpainter.drawPoint(pt)
+
+	def _updateDataPosition(self):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = []
+		for pt in self._data:
+			pt.updatePosition()
+
 
 
 class BaseChart(QWidget):
