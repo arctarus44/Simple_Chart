@@ -6,6 +6,7 @@ A simple chart widget written in python with PyQt5
 - [x] Draw points
 - [x] Draw lines
 - [x] Handle resizeEvent
-- [ ] Make abscissa and ordinate adaptative
+- [x] Make abscissa and ordinate adaptative
+- [ ] Add guides when needed to ease the reading of value
 - [ ] Add time support for abscissa : show only the value within the last hours/minutes
 - [ ] Add style support
