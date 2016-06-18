@@ -3,8 +3,9 @@
 # tab-width: 4
 
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont
+from PyQt5.QtCore import QPoint, QLine, Qt
+from PyQt5.QtGui import (QPainter, QPen, QFontMetrics, QFont, QColor,
+QPainterPath)
 
 class Line(object):
 	"""docstring for Line"""
@@ -96,6 +97,46 @@ class LinesHandler:
 		for k in self._data.keys():
 			line = self._data[k]
 			line.updatePointsPosition()
+
+class AreaHandler(LinesHandler):
+	"""docstring for LinesAreaHandler"""
+
+	def _drawArea(self, qpainter, lines, pen):
+		color = QColor(*pen.color().getRgb())
+		color.setAlpha(40)
+		qpainter.setPen(color)
+
+		for line in lines:
+			# right equation ya = m * xa + p
+			p1 = line.p1()
+			p2 = line.p2()
+			m = line.dy() / line.dx()
+			p = p2.y() - p2.x() * m
+
+			for x in range(p1.x(), p2.x()):
+				y = m * x + p
+				qpainter.drawLine(x, y, x, self.zero_pos.y())
+
+
+	def _drawData(self, qpainter):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+
+		for k in self._data.keys():
+			drawedLine = []
+			chartLine = self._data[k]
+			qpainter.setPen(chartLine.pen)
+			prev_pt = chartLine[0]
+
+			for pt in chartLine[1:]:
+				line = QLine(prev_pt, pt)
+				drawedLine.append(line)
+				qpainter.drawLine(line)
+				prev_pt = pt
+
+			self._drawArea(qpainter, drawedLine, chartLine.pen)
+
 
 class DotsHandler:
 	"""docstring for DotsHandler"""
