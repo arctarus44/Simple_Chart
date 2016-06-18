@@ -3,9 +3,9 @@
 # tab-width: 4
 
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QPainter, QPen, QFontMetrics, QFont
-import abc
+from PyQt5.QtCore import QPoint, QLine, Qt
+from PyQt5.QtGui import (QPainter, QPen, QFontMetrics, QFont, QColor,
+QPainterPath)
 
 class Line(object):
 	"""docstring for Line"""
@@ -49,10 +49,126 @@ class ChartPoint(QPoint):
 		y *= (self.__chart.zero_pos.y() - self.__chart.max_ord_pos.y())
 		self.setY(int(self.__chart.zero_pos.y() - y))
 
+class ChartPointPen(ChartPoint):
+	"""docstring for ChartPointPen"""
+	def __init__(self, abscissa, ordinate, chart, pen):
+		super(ChartPointPen, self).__init__(abscissa, ordinate, chart)
+		self._pen = pen
 
-class SimpleAbstractChart(QWidget):
 
-	__metaclass__ = abc.ABCMeta
+class LinesHandler:
+	"""docstring for LineHandler"""
+
+	def addLine(self, lineKey, pen):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+		self._data[lineKey] = Line(self, pen)
+
+	def addPoint(self, lineKey, abscissa, ordinate):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+
+		self._data[lineKey].addPoint(ChartPoint(abscissa, ordinate, self))
+
+		if self._pt_max_abs < abscissa:
+			self._updateMaxAbscissa(abscissa)
+		elif self._pt_max_ord < ordinate:
+			self._updateMaxOrdinate(ordinate)
+
+	def _drawData(self, qpainter):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+		for k in self._data.keys():
+			line = self._data[k]
+			qpainter.setPen(line.pen)
+			prev_pt = line[0]
+
+			for pt in line[1:]:
+				qpainter.drawLine(prev_pt, pt)
+				prev_pt = pt
+
+	def _updateDataPosition(self):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+		for k in self._data.keys():
+			line = self._data[k]
+			line.updatePointsPosition()
+
+class AreaHandler(LinesHandler):
+	"""docstring for LinesAreaHandler"""
+
+	def _drawArea(self, qpainter, lines, pen):
+		color = QColor(*pen.color().getRgb())
+		color.setAlpha(40)
+		qpainter.setPen(color)
+
+		for line in lines:
+			# right equation ya = m * xa + p
+			p1 = line.p1()
+			p2 = line.p2()
+			m = line.dy() / line.dx()
+			p = p2.y() - p2.x() * m
+
+			for x in range(p1.x(), p2.x()):
+				y = m * x + p
+				qpainter.drawLine(x, y, x, self.zero_pos.y())
+
+
+	def _drawData(self, qpainter):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+
+		for k in self._data.keys():
+			drawedLine = []
+			chartLine = self._data[k]
+			qpainter.setPen(chartLine.pen)
+			prev_pt = chartLine[0]
+
+			for pt in chartLine[1:]:
+				line = QLine(prev_pt, pt)
+				drawedLine.append(line)
+				qpainter.drawLine(line)
+				prev_pt = pt
+
+			self._drawArea(qpainter, drawedLine, chartLine.pen)
+
+
+class DotsHandler:
+	"""docstring for DotsHandler"""
+
+	def addPoint(self, abscissa, ordinate, pen):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = []
+		self._data.append(ChartPointPen(abscissa, ordinate, self, pen))
+
+		if self._pt_max_abs < abscissa:
+			self._updateMaxAbscissa(abscissa)
+		elif self._pt_max_ord < ordinate:
+			self._updateMaxOrdinate(ordinate)
+
+	def _drawData(self, qpainter):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = []
+		for pt in self._data:
+			qpainter.setPen(pt._pen)
+			qpainter.drawPoint(pt)
+
+	def _updateDataPosition(self):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = []
+		for pt in self._data:
+			pt.updatePosition()
+
+
+class BaseChart(QWidget):
 
 	MARGIN = 60
 	ABS_GUIDE_LEN = 15
@@ -63,13 +179,14 @@ class SimpleAbstractChart(QWidget):
 	__ABS_LBL_SPACING = 10
 
 	def __init__(self):
-		super(SimpleAbstractChart, self).__init__()
+		super(BaseChart, self).__init__()
 		self.ord_max_value = 100
 		self.abs_max_value = 100
 		self.unit_abs = None
 		self.unit_ord = None
 		self._pt_max_abs = 0
 		self._pt_max_ord = 0
+		self._data = None
 
 		# Graphical properties
 		self.setAutoFillBackground(True)
@@ -188,72 +305,3 @@ class SimpleAbstractChart(QWidget):
 		else:
 			self.ord_max_value = maximum
 			self._updateDataPosition()
-
-	@abc.abstractmethod
-	def _drawData(self, qpainter):
-		raise NotImplementedError
-
-	@abc.abstractmethod
-	def updateDataPosition(self):
-		raise NotImplementedError
-
-
-class SimpleDotChart(SimpleAbstractChart):
-	"""docstring for DotChart"""
-
-	def __init__(self):
-		super(SimpleDotChart, self).__init__()
-		self.__points = []
-		# Pen
-		self.__dot_pen = QPen(Qt.red)
-
-	def addPoint(self, abscissa, ordinate):
-		self.__points.append(ChartPoint(abscissa, ordinate, self))
-
-		if self._pt_max_abs < abscissa:
-			self._updateMaxAbscissa(abscissa)
-		elif self._pt_max_ord < ordinate:
-			self._updateMaxOrdinate(ordinate)
-
-	def _drawData(self, qpainter):
-		qpainter.setPen(self.__dot_pen)
-		for pt in self.__points:
-			qpainter.drawPoint(pt)
-
-	def _updateDataPosition(self):
-		for pt in self.__points:
-			pt.updatePosition()
-
-
-class SimpleLinesChart(SimpleAbstractChart):
-	"""docstring for SimpleLinesChart"""
-
-	def __init__(self):
-		super(SimpleLinesChart, self).__init__()
-		self._lines = {}
-
-	def addLine(self, key, pen):
-		self._lines[key] = Line(self, pen)
-
-	def addPoint(self, key, abscissa, ordinate):
-		self._lines[key].addPoint(ChartPoint(abscissa, ordinate, self))
-
-		if self._pt_max_abs < abscissa:
-			self._updateMaxAbscissa(abscissa)
-		elif self._pt_max_ord < ordinate:
-			self._updateMaxOrdinate(ordinate)
-
-	def _drawData(self, qpainter):
-		for k in self._lines.keys():
-			line = self._lines[k]
-			qpainter.setPen(line.pen)
-			prev_pt = line[0]
-
-			for pt in line[1:]:
-				qpainter.drawLine(prev_pt, pt)
-				prev_pt = pt
-
-	def _updateDataPosition(self):
-		for k in self._lines.keys():
-			line = self._lines[k]
-			line.updatePointsPosition()
