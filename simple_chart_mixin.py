@@ -141,6 +141,7 @@ class AreaHandler(LinesHandler):
 class DotsHandler:
 	"""docstring for DotsHandler"""
 
+
 	def addPoint(self, abscissa, ordinate, pen):
 		# TODO : add decorator to initialize _data
 		if self._data is None:
@@ -166,6 +167,7 @@ class DotsHandler:
 			self._data = []
 		for pt in self._data:
 			pt.updatePosition()
+
 
 
 class BaseChart(QWidget):
