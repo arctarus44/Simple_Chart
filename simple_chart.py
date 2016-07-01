@@ -316,3 +316,15 @@ class TimeLineChart(BaseChart):
 	"""docstring for TimeLineChart"""
 	def __init__(self):
 		super(TimeLineChart, self).__init__()
+
+	def _updateOrdAbsPos(self):
+		pass
+
+	def _updateMaxOrdAbs(self, abscissa, ordinate):
+		pass
+
+	def _drawLabels(self, qpainter):
+		pass
+
+	def _drawAxis(self, qpainter):
+		pass
