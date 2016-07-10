@@ -7,8 +7,8 @@ from PyQt5.QtCore import QPoint, QLine, Qt
 from PyQt5.QtGui import (QPainter, QPen, QFontMetrics, QFont, QColor,
 QPainterPath)
 
-class Line(object):
-	"""docstring for Line"""
+class Subset(object):
+	"""docstring for Subset"""
 
 	def __init__(self, chart, pen):
 		self._points = []
