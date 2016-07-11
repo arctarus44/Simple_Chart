@@ -50,8 +50,8 @@ class ChartPoint(QPoint):
 		self.setY(int(self.__chart.zero_pos.y() - y))
 
 
-class LinesHandler:
-	"""docstring for LineHandler"""
+class Handler:
+	"""docstring for Handler"""
 
 	def addSubset(self, subset, pen):
 		# TODO : add decorator to initialize _data
@@ -63,13 +63,23 @@ class LinesHandler:
 		# TODO : add decorator to initialize _data
 		if self._data is None:
 			self._data = {}
-
 		self._data[subset].addPoint(ChartPoint(abscissa, ordinate, self))
 
 		if self._pt_max_abs < abscissa:
 			self._updateMaxAbscissa(abscissa)
 		elif self._pt_max_ord < ordinate:
 			self._updateMaxOrdinate(ordinate)
+
+	def _updateDataPosition(self):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+		for subset in self._data.keys():
+			self._data[subset].updatePointsPosition()
+
+
+class LinesHandler(Handler):
+	"""docstring for LineHandler"""
 
 	def _drawData(self, qpainter):
 		# TODO : add decorator to initialize _data
@@ -84,13 +94,6 @@ class LinesHandler:
 				qpainter.drawLine(prev_pt, pt)
 				prev_pt = pt
 
-	def _updateDataPosition(self):
-		# TODO : add decorator to initialize _data
-		if self._data is None:
-			self._data = {}
-		for k in self._data.keys():
-			line = self._data[k]
-			line.updatePointsPosition()
 
 class AreaHandler(LinesHandler):
 	"""docstring for LinesAreaHandler"""
@@ -110,7 +113,6 @@ class AreaHandler(LinesHandler):
 			for x in range(p1.x(), p2.x()):
 				y = m * x + p
 				qpainter.drawLine(x, y, x, self.zero_pos.y())
-
 
 	def _drawData(self, qpainter):
 		# TODO : add decorator to initialize _data
@@ -132,25 +134,8 @@ class AreaHandler(LinesHandler):
 			self._drawArea(qpainter, drawedLine, chartLine.pen)
 
 
-class DotsHandler:
+class DotsHandler(Handler):
 	"""docstring for DotsHandler"""
-
-	def addSubset(self, subset, pen):
-		# TODO : add decorator to initialize _data
-		if self._data is None:
-			self._data = {}
-		self._data[subset] = Subset(self, pen)
-
-	def addPoint(self, subset, abscissa, ordinate):
-		# TODO : add decorator to initialize _data
-		if self._data is None:
-			self._data = {}
-		self._data[subset].addPoint(ChartPoint(abscissa, ordinate, self))
-
-		if self._pt_max_abs < abscissa:
-			self._updateMaxAbscissa(abscissa)
-		elif self._pt_max_ord < ordinate:
-			self._updateMaxOrdinate(ordinate)
 
 	def _drawData(self, qpainter):
 		# TODO : add decorator to initialize _data
@@ -160,14 +145,6 @@ class DotsHandler:
 			qpainter.setPen(self._data[subset].pen)
 			for pt in self._data[subset]:
 				qpainter.drawPoint(pt)
-
-	def _updateDataPosition(self):
-		# TODO : add decorator to initialize _data
-		if self._data is None:
-			self._data = {}
-		for subset in self._data.keys():
-			for pt in self._data[subset]:
-				pt.updatePosition()
 
 
 class BaseChart(QWidget):
