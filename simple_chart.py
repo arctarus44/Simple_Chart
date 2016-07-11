@@ -49,12 +49,6 @@ class ChartPoint(QPoint):
 		y *= (self.__chart.zero_pos.y() - self.__chart.max_ord_pos.y())
 		self.setY(int(self.__chart.zero_pos.y() - y))
 
-class ChartPointPen(ChartPoint):
-	"""docstring for ChartPointPen"""
-	def __init__(self, abscissa, ordinate, chart, pen):
-		super(ChartPointPen, self).__init__(abscissa, ordinate, chart)
-		self._pen = pen
-
 
 class LinesHandler:
 	"""docstring for LineHandler"""
