@@ -59,18 +59,18 @@ class ChartPointPen(ChartPoint):
 class LinesHandler:
 	"""docstring for LineHandler"""
 
-	def addLine(self, lineKey, pen):
+	def addSubset(self, subset, pen):
 		# TODO : add decorator to initialize _data
 		if self._data is None:
 			self._data = {}
-		self._data[lineKey] = Line(self, pen)
+		self._data[subset] = Subset(self, pen)
 
-	def addPoint(self, lineKey, abscissa, ordinate):
+	def addPoint(self, subset, abscissa, ordinate):
 		# TODO : add decorator to initialize _data
 		if self._data is None:
 			self._data = {}
 
-		self._data[lineKey].addPoint(ChartPoint(abscissa, ordinate, self))
+		self._data[subset].addPoint(ChartPoint(abscissa, ordinate, self))
 
 		if self._pt_max_abs < abscissa:
 			self._updateMaxAbscissa(abscissa)
@@ -141,11 +141,17 @@ class AreaHandler(LinesHandler):
 class DotsHandler:
 	"""docstring for DotsHandler"""
 
-	def addPoint(self, abscissa, ordinate, pen):
+	def addSubset(self, subset, pen):
 		# TODO : add decorator to initialize _data
 		if self._data is None:
-			self._data = []
-		self._data.append(ChartPointPen(abscissa, ordinate, self, pen))
+			self._data = {}
+		self._data[subset] = Subset(self, pen)
+
+	def addPoint(self, subset, abscissa, ordinate):
+		# TODO : add decorator to initialize _data
+		if self._data is None:
+			self._data = {}
+		self._data[subset].addPoint(ChartPoint(abscissa, ordinate, self))
 
 		if self._pt_max_abs < abscissa:
 			self._updateMaxAbscissa(abscissa)
@@ -155,17 +161,19 @@ class DotsHandler:
 	def _drawData(self, qpainter):
 		# TODO : add decorator to initialize _data
 		if self._data is None:
-			self._data = []
-		for pt in self._data:
-			qpainter.setPen(pt._pen)
-			qpainter.drawPoint(pt)
+			self._data = {}
+		for subset in self._data.keys():
+			qpainter.setPen(self._data[subset].pen)
+			for pt in self._data[subset]:
+				qpainter.drawPoint(pt)
 
 	def _updateDataPosition(self):
 		# TODO : add decorator to initialize _data
 		if self._data is None:
-			self._data = []
-		for pt in self._data:
-			pt.updatePosition()
+			self._data = {}
+		for subset in self._data.keys():
+			for pt in self._data[subset]:
+				pt.updatePosition()
 
 
 class BaseChart(QWidget):
